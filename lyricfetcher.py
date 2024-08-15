@@ -26,7 +26,7 @@ def parse_lrc(lrc):
 def get_lyrics(track, artist):
     try:
         #Synced_Only show only songs with timestamps. 
-        lrc = syncedlyrics.search(f"{track} {artist}", synced_only=True, providers=["Lrclib", "Musixmatch"])
+        lrc = syncedlyrics.search(f"{track} {artist}", synced_only=True, providers=["Lrclib", "Musixmatch", "Megalobiz", "NetEase"])
         if lrc:
             return parse_lrc(lrc)
         else:

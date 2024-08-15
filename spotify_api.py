@@ -14,10 +14,14 @@ def get_current_track():
     current_track = sp.current_playback()
     #If I successfully get a new track:
     #Return name, artist, and the song progress in ms. 
-    if current_track:
-        name = current_track['item']['name']
-        artist = current_track['item']['artists'][0]['name']
-        progress = current_track['progress_ms']
-        return name, artist, progress
+    if current_track and current_track.get('item'):
+        name = current_track['item'].get('name')
+        artist = current_track['item']['artists'][0].get('name') if current_track['item']['artists'] else None
+        progress = current_track.get('progress_ms', 0)
+        
+        # Ensure name and artist are not None before returning
+        if name and artist:
+            return name, artist, progress
+    
+    # Default to no track found
     return None, None, None
-
