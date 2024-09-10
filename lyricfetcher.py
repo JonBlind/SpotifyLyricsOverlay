@@ -1,6 +1,13 @@
 #Utilizes syncedlyrics to obtain LRC formatted lyrics. Github: https://github.com/moehmeni/syncedlyrics
 import syncedlyrics
 
+provider = 'Lrclib'
+
+def change_provider(count):
+    providers = ["Lrclib", "Musixmatch", "Megalobiz", "NetEase"]
+    global provider
+    provider = providers[count]
+
 def parse_lrc(lrc):
     lyrics_dict = {}
     #For every line in the lrc, split them
@@ -26,7 +33,7 @@ def parse_lrc(lrc):
 def get_lyrics(track, artist):
     try:
         #Synced_Only show only songs with timestamps. 
-        lrc = syncedlyrics.search(f"{track} {artist}", synced_only=True, providers=["Lrclib", "Musixmatch", "Megalobiz", "NetEase"])
+        lrc = syncedlyrics.search(f"{track} {artist}", synced_only=True, providers=[provider])
         if lrc:
             return parse_lrc(lrc)
         else:
@@ -34,6 +41,10 @@ def get_lyrics(track, artist):
     except Exception as e:
         print(f"Error fetching lyrics(Likely No TimeStamps): {e}")
         return None
+    
+def get_provider():
+    return provider
+
     
 #Test
 track = "Viva La Vida"

@@ -2,12 +2,14 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSlider, QPushButton, 
 from PyQt6.QtCore import Qt, QTimer, QPoint
 from PyQt6.QtGui import QFont, QColor, QPalette
 from spotify_api import get_current_track
-from lyricfetcher import get_lyrics
+from lyricfetcher import get_lyrics, change_provider, get_provider
 import sys
 
 class LyricsApp(QWidget):
     def __init__(self):
         super().__init__()
+        self.cycleCount = 0
+        self.provider = get_provider()
 
         # Window Title
         self.setWindowTitle("Spotify Lyrics")
@@ -44,9 +46,20 @@ class LyricsApp(QWidget):
         self.invert_colors_btn.setStyleSheet("QPushButton:checked { background-color: none; }")
         self.invert_colors_btn.clicked.connect(self.toggle_colors)
 
+        #Add the cycleLRC button
+        self.cycle_LRC_btn = QPushButton("Cycle LRC", self)
+        self.cycle_LRC_btn.setFixedSize(100, 30)
+        self.cycle_LRC_btn.clicked.connect(self.cycle_LRC)
+        self.cycle_LRC_btn.clicked.connect(self.cycle_LRC_label)
+
+        # Add widget that displays the current LRC
+        self.current_LRC_text = QLabel("Provider: " + get_provider())
+
         # Add the buttons to a horizontal layout to place them at the top right
         self.top_layout = QHBoxLayout()
+        self.top_layout.addWidget(self.current_LRC_text)
         self.top_layout.addStretch()  # Pushes the buttons to the right
+        self.top_layout.addWidget(self.cycle_LRC_btn)
         self.top_layout.addWidget(self.invert_colors_btn)
         self.top_layout.addWidget(self.exit_btn)
 
@@ -93,9 +106,11 @@ class LyricsApp(QWidget):
         self.dragging = False
         self.drag_position = QPoint()
 
+    #Change the opacity of the overall window. Want to change only background and not lyrics in future.
     def change_opacity(self, value):
         self.setWindowOpacity(value / 100)
 
+    #Method to invert the color scheme.
     def toggle_colors(self):
         if self.invert_colors_btn.isChecked():
             self.bg_color = QColor(255, 255, 255)
@@ -114,16 +129,27 @@ class LyricsApp(QWidget):
         self.current_lyric_label.setStyleSheet(f"color: {self.text_color.name()}")
         self.next_lyric_label.setStyleSheet(f"color: {self.text_color.name()}")
 
+    # Method to change the LRC provider if lyrics are out of sync.
+    def cycle_LRC(self):
+        self.cycleCount += 1
+        if self.cycleCount == 4: #Only have 4 total providers
+            self.cycleCount = 0
+        change_provider(self.cycleCount)
+
+    def cycle_LRC_label(self):
+        self.current_LRC_text.setText("Provider: " + get_provider())
+        
     def update_lyrics(self):
         track, artist, progress = get_current_track()
         if track and artist:
-            # If the track changed, get the current track again.
-            if (track, artist) != self.current_track:
+            # If the track changed, get the current track again. If LRC cycles, change the lyrics to match the new LRC.
+            if (track, artist) != self.current_track or self.provider != get_provider():
+                self.provider = get_provider()
                 self.current_track = (track, artist)
                 self.lyrics_dict = get_lyrics(track, artist)
                 # If the track and artist can't form an LRC, show an error message.
                 if not self.lyrics_dict:
-                    self.current_lyric_label.setText("No lyrics available for this song.")
+                    self.current_lyric_label.setText("No lyrics available. Try Cycling LRC's and Refreshing!")
                     self.previous_lyric_label.setText("")
                     self.next_lyric_label.setText("")
                     self.lyrics_dict = {}
@@ -141,7 +167,7 @@ class LyricsApp(QWidget):
 
     def get_current_lyric(self, progress):
         if not self.lyrics_dict:
-            return "", "No lyrics available for this song.", ""
+            return "", "No lyrics available. Try Cycling LRC's and Refreshing!", ""
 
         # Sort the timestamps (keys) in ascending order
         lyrics_keys = sorted(self.lyrics_dict.keys())
