@@ -143,24 +143,34 @@ class LyricsApp(QWidget):
         if not self.lyrics_dict:
             return "", "No lyrics available for this song.", ""
 
+        # Sort the timestamps (keys) in ascending order
         lyrics_keys = sorted(self.lyrics_dict.keys())
+        
         current_lyric = ""
         prev_lyric = ""
         next_lyric = ""
-        for i, key in enumerate(lyrics_keys):
-            if progress < key:
-                if i > 0:
-                    current_lyric = self.lyrics_dict[lyrics_keys[i-1]]
-                    prev_lyric = self.lyrics_dict[lyrics_keys[i-2]] if i > 1 else ""
-                else:
-                    current_lyric = self.lyrics_dict[lyrics_keys[i]]
-                next_lyric = self.lyrics_dict[key]
-                break
+
+        # Check if progress is less than the first key
+        if progress < lyrics_keys[0]:
+            current_lyric = "[START]"
+            next_lyric = self.lyrics_dict[lyrics_keys[0]]
+            prev_lyric = ""
+        # Check if progress is greater than the last key
+        elif progress > lyrics_keys[-1]:
+            prev_lyric = self.lyrics_dict[lyrics_keys[-2]]
+            current_lyric = self.lyrics_dict[lyrics_keys[-1]]
+            next_lyric = "[END]"
         else:
-            if lyrics_keys:
-                prev_lyric = self.lyrics_dict[lyrics_keys[-2]] if len(lyrics_keys) > 1 else ""
-                current_lyric = self.lyrics_dict[lyrics_keys[-1]]
-                next_lyric = "[END]"
+            # Iterate through the sorted keys
+            for i, key in enumerate(lyrics_keys):
+                if progress < key:
+                    if i > 0:
+                        current_lyric = self.lyrics_dict[lyrics_keys[i-1]]
+                        prev_lyric = self.lyrics_dict[lyrics_keys[i-2]] if i > 1 else ""
+                    else:
+                        current_lyric = self.lyrics_dict[lyrics_keys[i]]
+                    next_lyric = self.lyrics_dict[key]
+                    break
 
         return prev_lyric, current_lyric, next_lyric
 

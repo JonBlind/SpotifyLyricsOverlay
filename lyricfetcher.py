@@ -40,3 +40,4 @@ track = "Viva La Vida"
 artist = "coldplay"
 
 lyrics_dict = get_lyrics(track, artist)
+
