@@ -36,3 +36,9 @@ syncedlyrics API: https://github.com/moehmeni/syncedlyrics
 
 Feel free to open issues or submit pull requests if you'd like to contribute to this project.
 
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
+
