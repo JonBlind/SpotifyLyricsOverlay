@@ -44,11 +44,3 @@ def get_lyrics(track, artist):
     
 def get_provider():
     return provider
-
-    
-#Test
-track = "Viva La Vida"
-artist = "coldplay"
-
-lyrics_dict = get_lyrics(track, artist)
-
