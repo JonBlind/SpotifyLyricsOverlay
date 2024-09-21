@@ -30,7 +30,7 @@ Open Spotify and start playing a song. The lyrics will appear in an overlay wind
 - There is no way to change the size of the window yet. May be added soon.
 
 ## Dependencies
-Spotipy Library: https://github.com/spotipy-dev/spotipy
+Spotipy Library: https://github.com/spotipy-dev/spotipy \
 syncedlyrics API: https://github.com/moehmeni/syncedlyrics
 
 
