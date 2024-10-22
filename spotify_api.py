@@ -1,16 +1,39 @@
 #Handling API
+import os
+import tempfile
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from nolookie import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI
 
+# Function to get a suitable cache path in the temp directory.
+def get_cache_file():
+    cache_dir = os.path.join(tempfile.gettempdir(), 'SpotifyLyrics')
+    os.makedirs(cache_dir, exist_ok=True)
+    return os.path.join(cache_dir, '.cache') # Create the .cache
+
+cache_path = get_cache_file()
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id = SPOTIFY_CLIENT_ID,
                                                client_secret= SPOTIFY_CLIENT_SECRET,
                                                redirect_uri= SPOTIFY_REDIRECT_URI,
-                                               scope = "user-read-playback-state"))
+                                               scope = "user-read-playback-state",
+                                               cache_path=cache_path))
+
+
+# Checks the status of the current token, if it expires grab a new token.
+def ensure_token_valid():
+    #Try to obtain a cached_token.
+    token_info = sp.auth_manager.get_cached_token()
+
+    # Check if the current token is valid or even exits. If not, generate new one.
+    if not token_info or sp.auth_manager.is_token_expired(token_info):
+        print("Token expired or not found, Grabbing new one...")
+        sp.auth_manager.get_access_token()  
+
 
 #Grab the current track that the spotify user is listening to.
 def get_current_track():
+    ensure_token_valid()
     current_track = sp.current_playback()
     #If I successfully get a new track:
     #Return name, artist, and the song progress in ms. 
