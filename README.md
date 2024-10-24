@@ -11,14 +11,22 @@ This application connects to your Spotify account and overlays the lyrics of the
 - **Adjustable Opacity**: Modify the transparency of the lyrics overlay to your preference.
 
 ## Installation
-
-Clone the repository or download the Zip:
+ON WINDOWS:\
+Clone the repo or download the zip and move the .exe wherever you like. Running the .exe should start the program.
 
 ```bash
-   git clone https://github.com/JonBlind/SpotifyLyrics
+git clone https://github.com/JonBlind/SpotifyLyricsOverlay
 ```
 
-Navigate to the project directory and simply run the executable:
+ON LINUX/MAC:\
+Not Yet Supported!
+
+
+Compiled via Powershell with the following command:
+```powershell
+pyinstaller --onefile --noconsole --icon=".\imgs\icon.ico" pyinstaller.py
+```
+
 
 ## How To Use
 Open the Application. It will take you to the Spotify login and ask to link your account. Start playing a song and the lyrics will appear in the overlay window.
@@ -29,6 +37,7 @@ Open the Application. It will take you to the Spotify login and ask to link your
 - The opacity meter will alter the opacity of the ENTIRE window. So be careful!
 - The software was made with the purpose of being overlayed over all applications. So there is NO feature to stop that.
 - There is no way to change the size of the window yet. May be added soon.
+- The program accesses your temp files to create a directory for storing .cache for API calls. 
 
 ## Dependencies
 Spotipy Library: https://github.com/spotipy-dev/spotipy \
