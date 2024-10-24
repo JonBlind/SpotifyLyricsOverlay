@@ -4,6 +4,26 @@ import tempfile
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from nolookie import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI
+import time
+import requests
+
+
+
+
+# Retry mechanism decorator
+def retry_on_exception(retries=3, delay=5, exception=Exception):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            for attempt in range(retries):
+                try:
+                    return func(*args, **kwargs)
+                except exception as e:
+                    print(f"Exception occurred: {e}. Retrying {attempt + 1}/{retries} in {delay} seconds...")
+                    time.sleep(delay)
+            print("Max retries reached. Function failed.")
+            return None
+        return wrapper
+    return decorator
 
 # Function to get a suitable cache path in the temp directory.
 def get_cache_file():
@@ -21,6 +41,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id = SPOTIFY_CLIENT_ID,
 
 
 # Checks the status of the current token, if it expires grab a new token.
+@retry_on_exception(retries=5, delay=5, exception=requests.exceptions.RequestException)
 def ensure_token_valid():
     #Try to obtain a cached_token.
     token_info = sp.auth_manager.get_cached_token()
@@ -32,6 +53,7 @@ def ensure_token_valid():
 
 
 #Grab the current track that the spotify user is listening to.
+@retry_on_exception(retries=5, delay=5, exception=requests.exceptions.RequestException)
 def get_current_track():
     ensure_token_valid()
     current_track = sp.current_playback()
