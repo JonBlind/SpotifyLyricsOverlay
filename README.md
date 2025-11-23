@@ -12,13 +12,19 @@ This application connects to your Spotify account and overlays the lyrics of the
 
 ## Installation
 ON WINDOWS:\
+Download the .exe from [here](https://github.com/JonBlind/SpotifyLyricsOverlay/releases/tag/1.0.0) and simply run it.
+<br>
+<br>
+OR  
+<br>
+<br>
 Clone the repo or download the zip and move the .exe wherever you like. Running the .exe should start the program.
 
 ```bash
 git clone https://github.com/JonBlind/SpotifyLyricsOverlay
 ```
 
-ON LINUX/MAC:\
+ON LINUX/MAC:  
 Not Yet Supported!
 
 
@@ -31,7 +37,7 @@ pyinstaller --onefile --noconsole --icon=".\imgs\icon.ico" pyinstaller.py
 ## How To Use
 Open the Application. It will take you to the Spotify login and ask to link your account. Start playing a song and the lyrics will appear in the overlay window.
 
-- LRC Cycle will swap the LRC provider to 1 of 4 providers based on the syncedlyrics API\
+- LRC Cycle will swap the LRC provider to 1 of 4 providers based on the syncedlyrics API  
  *This may greatly slow down the application until the app completely syncs to the new LRC.*
 - The Invert Color button simply inverts the color scheme. It should start in dark mode, and will swap to light mode if pressed.
 - The opacity meter will alter the opacity of the ENTIRE window. So be careful!
